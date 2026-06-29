@@ -219,6 +219,11 @@
     fields.notice.classList.remove("is-hidden");
   }
 
+  function hideNotice() {
+    fields.notice.textContent = "";
+    fields.notice.classList.add("is-hidden");
+  }
+
   async function loadRows() {
     const session = loadSession();
     setConnectionState(false, "Loading " + config.sheetName + " records...");
@@ -232,7 +237,7 @@
       if (!response || !response.ok) {
         records = [];
         setConnectionState(false, "Connection pending");
-        showNotice("Live " + config.sheetName + " records are not available yet. The table will populate automatically once data responses are enabled.");
+        hideNotice();
         renderRows();
         return;
       }
@@ -244,7 +249,7 @@
     } catch (error) {
       records = [];
       setConnectionState(false, "Connection unavailable");
-      showNotice("Live " + config.sheetName + " records are unavailable right now. You can still use the page layout and navigation.");
+      hideNotice();
       renderRows();
     }
   }

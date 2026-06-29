@@ -524,7 +524,7 @@
               </div>
             </div>
             <div class="feed" id="activityFeed">
-              <div class="feed-item"><b>Dashboard ready</b><span>Live tables will populate once data responses are enabled.</span></div>
+              <div class="feed-item"><b>Dashboard ready</b><span>Monitor daily operations from one place.</span></div>
               <div class="feed-item"><b>Modules ready</b><span>Clients, tickets, attendance, inventory, and expenses pages are available.</span></div>
             </div>
           </section>
@@ -687,6 +687,11 @@
       fields.notice.classList.remove("is-hidden");
     }
 
+    function hideNotice() {
+      fields.notice.textContent = "";
+      fields.notice.classList.add("is-hidden");
+    }
+
     function setConnectionState(ok, message) {
       return { ok: ok, message: message };
     }
@@ -710,7 +715,7 @@
 
         if (!response || !response.ok) {
           setConnectionState(false, "Connection pending");
-          showNotice("Live dashboard data is not available yet. Tables will populate automatically once data responses are enabled.");
+          hideNotice();
           renderTickets([]);
           renderClients([]);
           return;
@@ -723,7 +728,7 @@
         saveSession(Object.assign({}, session, { dashboard: response.dashboard || response }));
       } catch (error) {
         setConnectionState(false, "Connection unavailable");
-        showNotice("Live dashboard data is unavailable right now. You can still use the page layout and navigation.");
+        hideNotice();
         renderTickets([]);
         renderClients([]);
       }
