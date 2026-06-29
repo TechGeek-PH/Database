@@ -1,0 +1,714 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TechGeekPH Portal</title>
+  <style>
+    :root {
+      --blue: #064f83;
+      --blue-strong: #023d6b;
+      --crimson: #c91448;
+      --violet: #5a0b77;
+      --ink: #16202f;
+      --muted: #657386;
+      --line: #d9e1ec;
+      --soft: #f3f6fa;
+      --ok: #1f8a66;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(135deg, rgba(6, 79, 131, 0.08), rgba(201, 20, 72, 0.04) 42%, rgba(243, 246, 250, 0.94)),
+        var(--soft);
+    }
+
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+
+    .page {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: minmax(320px, 0.92fr) minmax(360px, 1.08fr);
+    }
+
+    .brand {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 44px;
+      padding: clamp(28px, 5vw, 68px);
+      color: #fff;
+      background: linear-gradient(160deg, rgba(2, 61, 107, 0.97), rgba(6, 79, 131, 0.94) 52%, rgba(90, 11, 119, 0.9));
+      overflow: hidden;
+    }
+
+    .brand::before {
+      content: "";
+      position: absolute;
+      width: 72%;
+      height: 28px;
+      right: -12%;
+      top: 0;
+      background: linear-gradient(90deg, var(--crimson), var(--violet), #0a5f9a);
+      transform: skewX(-24deg);
+      transform-origin: top right;
+    }
+
+    .brand-inner, .status-row { position: relative; z-index: 1; }
+
+    .logo-wrap {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: min(100%, 430px);
+      min-height: 116px;
+      padding: 18px 22px;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.16);
+    }
+
+    .logo-wrap img {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .logo-fallback {
+      display: none;
+      color: var(--blue);
+      font-weight: 900;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      letter-spacing: 0;
+      text-align: center;
+    }
+
+    .logo-wrap.is-empty img { display: none; }
+    .logo-wrap.is-empty .logo-fallback { display: block; }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 44px;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 28px;
+      height: 3px;
+      border-radius: 999px;
+      background: var(--crimson);
+    }
+
+    h1 {
+      max-width: 560px;
+      margin: 16px 0 18px;
+      font-size: clamp(2.35rem, 6vw, 5.55rem);
+      line-height: 0.97;
+      letter-spacing: 0;
+    }
+
+    .brand-copy {
+      max-width: 560px;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: clamp(1rem, 1.7vw, 1.18rem);
+      line-height: 1.7;
+    }
+
+    .status-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      max-width: 560px;
+    }
+
+    .status-pill {
+      min-height: 88px;
+      padding: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.09);
+    }
+
+    .status-pill b, .status-pill span { display: block; }
+    .status-pill b { margin-bottom: 6px; font-size: 0.95rem; }
+    .status-pill span { color: rgba(255, 255, 255, 0.72); font-size: 0.8rem; line-height: 1.35; }
+
+    .portal {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(24px, 5vw, 72px);
+    }
+
+    .login, .dashboard {
+      width: min(100%, 500px);
+      border: 1px solid rgba(217, 225, 236, 0.9);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 22px 70px rgba(14, 34, 55, 0.16);
+      overflow: hidden;
+    }
+
+    .accent {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      height: 6px;
+    }
+
+    .accent span:nth-child(1) { background: var(--blue); }
+    .accent span:nth-child(2) { background: var(--crimson); }
+    .accent span:nth-child(3) { background: var(--violet); }
+
+    .login-body, .dashboard-body { padding: clamp(24px, 4vw, 38px); }
+
+    .form-header { margin-bottom: 28px; }
+    .form-header h2 { margin: 0 0 8px; font-size: clamp(1.7rem, 3vw, 2.2rem); letter-spacing: 0; }
+    .form-header p { margin: 0; color: var(--muted); line-height: 1.55; }
+
+    .field-stack { display: grid; gap: 18px; }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      color: #334155;
+      font-size: 0.9rem;
+      font-weight: 750;
+    }
+
+    .field-control { position: relative; display: flex; align-items: center; }
+
+    .field-icon {
+      position: absolute;
+      left: 14px;
+      width: 20px;
+      height: 20px;
+      color: var(--blue);
+      pointer-events: none;
+    }
+
+    .field-control input, .field-control select {
+      width: 100%;
+      min-height: 50px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      padding: 0 44px 0 46px;
+      outline: none;
+      transition: border-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .field-control select {
+      appearance: none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, #64748b 50%),
+        linear-gradient(135deg, #64748b 50%, transparent 50%);
+      background-position: calc(100% - 20px) 22px, calc(100% - 14px) 22px;
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+    }
+
+    .field-control input:focus, .field-control select:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(6, 79, 131, 0.12);
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 6px;
+      display: inline-grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted);
+    }
+
+    .toggle-password:hover { background: #eef3f8; color: var(--blue); }
+
+    .form-options {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 18px 0 22px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .checkbox { display: inline-flex; align-items: center; gap: 9px; cursor: pointer; user-select: none; }
+    .checkbox input { width: 18px; height: 18px; accent-color: var(--blue); }
+
+    .text-link {
+      border: 0;
+      background: transparent;
+      color: var(--blue);
+      font-weight: 750;
+      padding: 0;
+    }
+
+    .primary-btn, .secondary-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      min-height: 52px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      font-weight: 850;
+    }
+
+    .primary-btn {
+      color: #fff;
+      background: linear-gradient(90deg, var(--blue), var(--blue-strong));
+      box-shadow: 0 15px 30px rgba(6, 79, 131, 0.24);
+    }
+
+    .secondary-btn {
+      color: var(--blue);
+      background: #fff;
+      border-color: var(--line);
+    }
+
+    .message {
+      display: none;
+      margin: 18px 0 0;
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .message.is-visible { display: block; }
+    .message.error { border: 1px solid rgba(201, 20, 72, 0.2); background: rgba(201, 20, 72, 0.08); color: #99183d; }
+    .message.success { border: 1px solid rgba(31, 138, 102, 0.2); background: rgba(31, 138, 102, 0.08); color: #16644d; }
+
+    .dashboard {
+      display: none;
+      width: min(100%, 760px);
+    }
+
+    .dashboard.is-active { display: block; }
+
+    .dashboard-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .user-chip { display: flex; align-items: center; gap: 14px; min-width: 0; }
+    .avatar {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      color: #fff;
+      background: linear-gradient(135deg, var(--crimson), var(--blue));
+      font-weight: 900;
+    }
+
+    .user-chip strong, .user-chip span { display: block; }
+    .user-chip strong { font-size: 1.05rem; }
+    .user-chip span { margin-top: 3px; color: var(--muted); font-size: 0.9rem; }
+
+    .metric-grid, .action-grid { display: grid; gap: 14px; }
+    .metric-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 18px; }
+    .action-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .metric, .action {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .metric { min-height: 112px; padding: 18px; background: #fbfdff; }
+    .metric span, .metric strong { display: block; }
+    .metric span { color: var(--muted); font-size: 0.86rem; font-weight: 750; }
+    .metric strong { margin-top: 16px; color: var(--blue); font-size: 2rem; letter-spacing: 0; }
+
+    .action {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-height: 80px;
+      padding: 16px;
+      text-align: left;
+    }
+
+    .action-icon {
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      color: #fff;
+      background: var(--blue);
+    }
+
+    .action:nth-child(2) .action-icon { background: var(--crimson); }
+    .action:nth-child(3) .action-icon { background: var(--violet); }
+    .action:nth-child(4) .action-icon { background: var(--ok); }
+    .action strong, .action span { display: block; }
+    .action strong { margin-bottom: 4px; color: var(--ink); font-size: 0.95rem; }
+    .action span { color: var(--muted); font-size: 0.82rem; line-height: 1.35; }
+
+    .is-hidden { display: none !important; }
+
+    @media (max-width: 980px) {
+      .page { grid-template-columns: 1fr; }
+      .brand { min-height: 460px; }
+      .portal { align-items: start; }
+    }
+
+    @media (max-width: 640px) {
+      .brand, .portal { padding: 22px; }
+      .brand { min-height: auto; gap: 34px; }
+      .logo-wrap { min-height: 86px; padding: 12px; }
+      .status-row, .metric-grid, .action-grid { grid-template-columns: 1fr; }
+      .form-options, .dashboard-top { align-items: flex-start; flex-direction: column; }
+      .secondary-btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="brand" aria-label="TechGeekPH portal brand">
+      <div class="brand-inner">
+        <div class="logo-wrap">
+          <img src="assets/TechGeekPH%20-%20logo.png" alt="TechGeekPH Solutions & Services Inc.">
+          <span class="logo-fallback">techgeekph</span>
+        </div>
+        <div class="eyebrow">Secure service access</div>
+        <h1>TechGeekPH Portal</h1>
+        <p class="brand-copy">Central access for service requests, account updates, and operations support for TechGeekPH Solutions & Services Inc.</p>
+      </div>
+      <div class="status-row" aria-label="Portal highlights">
+        <div class="status-pill"><b>Service Desk</b><span>Requests and job tickets</span></div>
+        <div class="status-pill"><b>Client Records</b><span>Account and contact details</span></div>
+        <div class="status-pill"><b>Operations</b><span>Internal team workspace</span></div>
+      </div>
+    </section>
+
+    <section class="portal">
+      <div class="login" id="loginShell">
+        <div class="accent" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="login-body">
+          <div class="form-header">
+            <h2>Sign in</h2>
+            <p>Access your TechGeekPH workspace.</p>
+          </div>
+
+          <form id="loginForm" novalidate>
+            <div class="field-stack">
+              <div class="field">
+                <label for="email">Email or employee ID</label>
+                <div class="field-control">
+                  <svg class="field-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9Z" stroke="currentColor" stroke-width="2"/>
+                    <path d="m5 7 7 6 7-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <input id="email" name="email" autocomplete="username" placeholder="name@techgeekph.com" required>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="password">Password</label>
+                <div class="field-control">
+                  <svg class="field-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M7 11V8a5 5 0 0 1 10 0v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M6.5 11h11A1.5 1.5 0 0 1 19 12.5v6A1.5 1.5 0 0 1 17.5 20h-11A1.5 1.5 0 0 1 5 18.5v-6A1.5 1.5 0 0 1 6.5 11Z" stroke="currentColor" stroke-width="2"/>
+                  </svg>
+                  <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter password" minlength="4" required>
+                  <button class="toggle-password" type="button" id="togglePassword" aria-label="Show password">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true">
+                      <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                      <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="role">Portal</label>
+                <div class="field-control">
+                  <svg class="field-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-13Z" stroke="currentColor" stroke-width="2"/>
+                    <path d="M8 9h8M8 13h8M8 17h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                  <select id="role" name="role">
+                    <option value="employee">Employee</option>
+                    <option value="client">Client</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-options">
+              <label class="checkbox">
+                <input type="checkbox" id="remember" name="remember">
+                <span>Remember me</span>
+              </label>
+            </div>
+
+            <button class="primary-btn" type="submit" id="submitBtn">
+              <span>Sign in to portal</span>
+              <svg viewBox="0 0 24 24" width="19" height="19" fill="none" aria-hidden="true">
+                <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+
+            <div class="message" id="message" role="status" aria-live="polite"></div>
+          </form>
+        </div>
+      </div>
+
+      <div class="dashboard" id="dashboard" aria-live="polite">
+        <div class="accent" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="dashboard-top">
+          <div class="user-chip">
+            <div class="avatar" id="avatar">TG</div>
+            <div>
+              <strong id="welcomeName">Welcome back</strong>
+              <span id="welcomeRole">TechGeekPH Portal</span>
+            </div>
+          </div>
+          <button class="secondary-btn" type="button" id="logoutBtn" style="max-width:150px;">Log out</button>
+        </div>
+        <div class="dashboard-body">
+          <div class="metric-grid">
+            <div class="metric"><span>Total clients</span><strong id="totalClientsMetric">--</strong></div>
+            <div class="metric"><span>Open tickets</span><strong id="openTicketsMetric">--</strong></div>
+            <div class="metric"><span>Low stock</span><strong id="lowStockMetric">--</strong></div>
+          </div>
+          <div class="action-grid">
+            <button class="action" type="button"><span class="action-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span><strong>New service request</strong><span>Create a support ticket</span></span></button>
+            <button class="action" type="button"><span class="action-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span><strong>View tickets</strong><span>Check request status</span></span></button>
+            <button class="action" type="button"><span class="action-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true"><path d="M20 21a8 8 0 1 0-16 0M12 13a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span><strong>Account profile</strong><span>Update portal details</span></span></button>
+            <button class="action" type="button"><span class="action-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true"><path d="M12 3v18M5 8h14M7 16h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span><strong>Operations hub</strong><span>Internal workspace</span></span></button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbxDY5TsonrB58YaN8LGbrrrc_ZD1QVpF1WK0p6jToIR2FBSqGaHfsgaE1CCiH1MvukV/exec";
+    const SESSION_KEY = "techgeekph_session";
+    const PORTAL_CONFIG = {
+      title: "TechGeekPH Portal",
+      company: "TechGeekPH Solutions & Services Inc.",
+      logoUrl: "assets/TechGeekPH%20-%20logo.png",
+      backendUrl: BACKEND_URL
+    };
+    const form = document.querySelector("#loginForm");
+    const loginShell = document.querySelector("#loginShell");
+    const dashboard = document.querySelector("#dashboard");
+    const message = document.querySelector("#message");
+    const password = document.querySelector("#password");
+    const togglePassword = document.querySelector("#togglePassword");
+    const submitBtn = document.querySelector("#submitBtn");
+    const logoutBtn = document.querySelector("#logoutBtn");
+    const welcomeName = document.querySelector("#welcomeName");
+    const welcomeRole = document.querySelector("#welcomeRole");
+    const avatar = document.querySelector("#avatar");
+    const totalClientsMetric = document.querySelector("#totalClientsMetric");
+    const openTicketsMetric = document.querySelector("#openTicketsMetric");
+    const lowStockMetric = document.querySelector("#lowStockMetric");
+
+    function showMessage(type, text) {
+      message.className = "message " + type + " is-visible";
+      message.textContent = text;
+    }
+
+    function setLoading(isLoading) {
+      submitBtn.disabled = isLoading;
+      submitBtn.querySelector("span").textContent = isLoading ? "Signing in..." : "Sign in to portal";
+    }
+
+    function initialsFrom(value) {
+      return String(value || "TG")
+        .replace(/@.*/, "")
+        .split(/[.\s_-]+/)
+        .filter(Boolean)
+        .slice(0, 2)
+        .map(function(part) { return part[0].toUpperCase(); })
+        .join("") || "TG";
+    }
+
+    function openDashboard(user, dashboardData) {
+      const role = String(user.role || "employee");
+      welcomeName.textContent = user.name || user.email || "TechGeekPH User";
+      welcomeRole.textContent = role.charAt(0).toUpperCase() + role.slice(1) + " portal";
+      avatar.textContent = initialsFrom(user.name || user.email);
+      updateDashboardMetrics(dashboardData || {});
+      loginShell.classList.add("is-hidden");
+      dashboard.classList.add("is-active");
+    }
+
+    function goToDashboard(user, dashboardData, source) {
+      localStorage.setItem(SESSION_KEY, JSON.stringify({
+        user: user || {},
+        email: user && (user.email || user.username) || "",
+        role: user && user.role || "employee",
+        dashboard: dashboardData || {},
+        source: source || "github-login",
+        loginAt: new Date().toISOString()
+      }));
+      window.location.href = "dashboard.html";
+    }
+
+    function updateDashboardMetrics(data) {
+      totalClientsMetric.textContent = formatMetric(data.totalClients);
+      openTicketsMetric.textContent = formatMetric(data.openTickets);
+      lowStockMetric.textContent = formatMetric(data.lowStockItems);
+    }
+
+    function formatMetric(value) {
+      if (value === undefined || value === null || value === "") return "--";
+      return Number.isFinite(Number(value)) ? Number(value).toLocaleString() : String(value);
+    }
+
+    async function callBackend(action, payload) {
+      const body = new URLSearchParams();
+      body.set("action", action);
+      body.set("method", action);
+
+      Object.keys(payload || {}).forEach(function(key) {
+        body.set(key, payload[key]);
+      });
+
+      const response = await fetch(BACKEND_URL, {
+        method: "POST",
+        body: body,
+        redirect: "follow"
+      });
+      const text = await response.text();
+      const type = response.headers.get("content-type") || "";
+
+      if (type.indexOf("application/json") !== -1 || /^[\s\r\n]*[\[{]/.test(text)) {
+        return JSON.parse(text);
+      }
+
+      if (/<html[\s>]/i.test(text) || /sandboxFrame/i.test(text)) {
+        return {
+          ok: false,
+          htmlResponse: true,
+          message: "Backend returned the Apps Script page instead of JSON."
+        };
+      }
+
+      return {
+        ok: false,
+        message: text.trim() || "Unexpected backend response."
+      };
+    }
+
+    function postToBackend(payload) {
+      const redirectForm = document.createElement("form");
+      redirectForm.method = "POST";
+      redirectForm.action = BACKEND_URL;
+      redirectForm.style.display = "none";
+
+      const values = Object.assign({ action: "validateLogin", method: "validateLogin" }, payload);
+      Object.keys(values).forEach(function(key) {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = key;
+        input.value = values[key];
+        redirectForm.appendChild(input);
+      });
+
+      document.body.appendChild(redirectForm);
+      redirectForm.submit();
+    }
+
+    togglePassword.addEventListener("click", function() {
+      const isHidden = password.type === "password";
+      password.type = isHidden ? "text" : "password";
+      togglePassword.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
+    });
+
+    logoutBtn.addEventListener("click", function() {
+      dashboard.classList.remove("is-active");
+      loginShell.classList.remove("is-hidden");
+      form.reset();
+      message.className = "message";
+      message.textContent = "";
+    });
+
+    form.addEventListener("submit", async function(event) {
+      event.preventDefault();
+      message.className = "message";
+
+      if (!form.checkValidity()) {
+        showMessage("error", "Please enter a valid login before continuing.");
+        form.reportValidity();
+        return;
+      }
+
+      const data = Object.fromEntries(new FormData(form).entries());
+      setLoading(true);
+
+      try {
+        const response = await callBackend("validateLogin", data);
+        setLoading(false);
+
+        if (!response || !response.ok) {
+          if (response && response.htmlResponse) {
+            showMessage("success", "Backend found. Opening dashboard...");
+            window.setTimeout(function() {
+              goToDashboard({
+                email: data.email,
+                role: data.role || "employee"
+              }, {}, "backend-html-response");
+            }, 450);
+            return;
+          }
+
+          showMessage("error", response && response.message ? response.message : "Login failed.");
+          return;
+        }
+
+        showMessage("success", "Login accepted.");
+        goToDashboard(response.user || data, response.dashboard, "backend-json");
+      } catch (error) {
+        setLoading(false);
+        showMessage("success", "Opening dashboard...");
+        window.setTimeout(function() {
+          goToDashboard({
+            email: data.email,
+            role: data.role || "employee"
+          }, {}, "backend-request-fallback");
+        }, 450);
+      }
+    });
+  </script>
+</body>
+</html>

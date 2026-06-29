@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TechGeekPH Attendance</title>
+  <link rel="stylesheet" href="assets/module.css">
+</head>
+<body>
+  <main class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo"><img src="assets/TechGeekPH%20-%20logo.png" alt="TechGeekPH"></div>
+        <div><strong>TechGeekPH Portal</strong><span>Employee time logs, breaks, and field attendance.</span></div>
+      </div>
+      <nav class="nav" aria-label="Attendance navigation">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="clients.html">Clients</a>
+        <a href="tickets.html">Tickets</a>
+        <a class="is-active" href="attendance.html">Attendance</a>
+        <a href="inventory.html">Inventory</a>
+        <a href="expenses.html">Expenses</a>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="logout" type="button" id="logoutBtn">Log out</button>
+      </div>
+    </aside>
+
+    <section class="main">
+      <header class="topbar">
+        <div class="title-block"><h1>Attendance</h1><p>Time in, break out, break in, and time out records.</p></div>
+        <div class="user-chip"><div class="avatar" id="avatar">TG</div><div><strong id="userName">TechGeekPH User</strong><span id="userRole">Portal access</span></div></div>
+      </header>
+
+      <div class="content">
+        <section class="workspace">
+          <p class="notice is-hidden" id="notice"></p>
+          <div class="summary-grid">
+            <article class="card"><span>Total Logs</span><strong id="metric0">--</strong><small>All attendance records</small></article>
+            <article class="card"><span>Today</span><strong id="metric1">--</strong><small>Logs dated today</small></article>
+            <article class="card"><span>On Break</span><strong id="metric2">--</strong><small>Currently on break</small></article>
+            <article class="card"><span>Timed Out</span><strong id="metric3">--</strong><small>Completed shifts</small></article>
+          </div>
+
+          <section class="panel">
+            <div class="panel-head">
+              <div><h2>Attendance Logs</h2><p>Based on the Attendance tab in your Google Sheet.</p></div>
+              <button class="ghost-btn" type="button" id="refreshBtn">Refresh</button>
+            </div>
+            <div class="toolbar">
+              <input class="search" id="searchInput" placeholder="Search employee, date, status">
+              <select class="filter" id="statusFilter"><option value="">All status</option><option>Time In</option><option>On Break</option><option>Returned</option><option>Timed Out</option><option>Absent</option></select>
+            </div>
+            <div class="table-wrap">
+              <table style="--table-min: 1060px;">
+                <thead><tr><th>Attendance ID</th><th>Date</th><th>Employee</th><th>Time In</th><th>Break Out</th><th>Break In</th><th>Time Out</th><th>Status</th></tr></thead>
+                <tbody id="moduleRows"><tr><td colspan="8">Waiting for attendance data...</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <aside class="side-rail">
+          <section class="panel">
+            <div class="panel-head"><div><h2>Attendance Draft</h2><p>Frontend draft until save API is enabled.</p></div></div>
+            <form class="form-grid" id="draftForm">
+              <div class="field"><label for="employeeName">Employee Name</label><input id="employeeName" name="employeeName" placeholder="Cyrus Miguel Saldo"></div>
+              <div class="field"><label for="status">Status</label><select id="status" name="status"><option>Time In</option><option>On Break</option><option>Returned</option><option>Timed Out</option><option>Absent</option></select></div>
+              <div class="field"><label for="locationLink">Location Link</label><input id="locationLink" name="locationLink" placeholder="Google Maps URL"></div>
+              <div class="field"><label for="remarks">Remarks</label><textarea id="remarks" name="remarks" placeholder="Notes"></textarea></div>
+              <button class="primary-btn" type="submit">Save draft</button>
+            </form>
+          </section>
+          <section class="panel">
+            <div class="panel-head"><div><h2>Workflow</h2><p>Daily timekeeping</p></div></div>
+            <div class="form-grid"><p class="notice">Time In -> On Break -> Returned -> Timed Out. Keep location and photo links in the sheet for field verification.</p></div>
+          </section>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    window.MODULE_CONFIG = {
+      sheetName: "Attendance",
+      statusKeys: ["status", "Status"],
+      draftMessage: "Attendance draft captured. Save-attendance API can be wired next.",
+      metrics: [
+        { type: "total" },
+        { type: "today", keys: ["date", "Date"] },
+        { type: "status", statuses: ["On Break"] },
+        { type: "status", statuses: ["Timed Out"] }
+      ],
+      columns: [
+        { keys: ["attendanceid", "AttendanceID"] },
+        { keys: ["date", "Date"] },
+        { keys: ["employeename", "Employee Name"] },
+        { keys: ["timein", "Time In"] },
+        { keys: ["breakout", "Break Out"] },
+        { keys: ["breakin", "Break In"] },
+        { keys: ["timeout", "Time Out"] },
+        { type: "status", keys: ["status", "Status"], empty: "Time In" }
+      ]
+    };
+  </script>
+  <script src="assets/module.js"></script>
+</body>
+</html>
