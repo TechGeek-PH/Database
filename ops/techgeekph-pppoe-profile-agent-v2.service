@@ -1,0 +1,20 @@
+[Unit]
+Description=TechGeekPH PPPoE Profile Agent v2
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/techgeekph/pppoe-profile-agent-v2
+EnvironmentFile=/etc/techgeekph/pppoe-agent.env
+ExecStart=/opt/techgeekph/pppoe-profile-agent-v2/.venv/bin/python /opt/techgeekph/pppoe-profile-agent-v2/pppoe-profile-agent-v2.py
+Restart=always
+RestartSec=3
+TimeoutStopSec=20
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
