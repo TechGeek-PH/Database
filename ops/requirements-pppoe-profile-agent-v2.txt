@@ -1,0 +1,2 @@
+requests>=2.32.0,<3
+RouterOS-api>=0.21.0,<1
